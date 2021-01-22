@@ -122,7 +122,7 @@ type PrometheusPushGateway struct {
 }
 
 // NewPrometheus generates a new set of metrics with a certain subsystem name
-func NewPrometheus(subsystem string, customMetricsList ...[]*Metric) *Prometheus {
+func NewPrometheus(subsystem string, metricPath string, customMetricsList ...[]*Metric) *Prometheus {
 
 	var metricsList []*Metric
 
@@ -135,10 +135,12 @@ func NewPrometheus(subsystem string, customMetricsList ...[]*Metric) *Prometheus
 	for _, metric := range standardMetrics {
 		metricsList = append(metricsList, metric)
 	}
-
+	if metricPath == "" {
+		metricPath = defaultMetricPath
+	}
 	p := &Prometheus{
 		MetricsList: metricsList,
-		MetricsPath: defaultMetricPath,
+		MetricsPath: metricPath,
 		ReqCntURLLabelMappingFn: func(c *gin.Context) string {
 			return c.Request.URL.Path // i.e. by default do nothing, i.e. return URL as is
 		},
